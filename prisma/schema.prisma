@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DIRECT_URL") // Supabase Postgres URL
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  fullName      String
+  thingSpeakId  String?  // Channel ID
+  thingSpeakKey String?  // API Key (optional if central management)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  patientData   PatientData[]
+}
+
+model PatientData {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  ecg       Float?
+  pulse     Float?
+  spo2      Float?
+  bp        Float?
+  humidity  Float?
+  pressure  Float?
+  altitude  Float?
+  aqi       Float?
+  createdAt DateTime @default(now())
+}
+
+model Doctor {
+  id        String   @id @default(uuid())
+  name      String
+  specialty String
+  location  String
+  contact   String
+  available Boolean  @default(true)
+}
